@@ -1,6 +1,6 @@
 import json
 import httpx
-#from urllib.request import quote
+from time import sleep
 
 class Parser():
     '''Наша рабочая лошадка'''
@@ -9,8 +9,8 @@ class Parser():
         self.key = key
         self.avito_urls = {
             'region_id': f'https://m.avito.ru/api/1/slocations',
-            'categories_info': f'https://m.avito.ru/api/2/search/main?&locationId=',
-            'avito_main': 'https://avito.ru'
+            'categories_id': f'https://m.avito.ru/api/2/search/main?&locationId=',
+            'avito_link': 'https://avito.ru'
         }
 
     def get_json_by_request(self, url, params):
@@ -34,8 +34,19 @@ class Parser():
         }
         url = f'{self.avito_urls["region_id"]}'
         json_content = self.get_json_by_request(url, params)
-        print(json_content)
         locations = json_content['result']['locations']
+
+        return locations[0]['id']
+
+    def get_category_ids(self, location_id):
+        sleep(2)
+        params = {
+            'key':f'{self.key}',
+            'locationId':f'{location_id}'
+        }
+        url = f'{self.avito_urls["categories_id"]}'
+        json_content = self.get_json_by_request(url, params)
+        locations = json_content['result']['categories']
 
         return locations[0]['id']
 
