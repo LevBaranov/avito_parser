@@ -45,8 +45,10 @@ class Parser():
         url = f'{self.avito_urls["region_id"]}'
         json_content = self._get_json_by_request(url, params)
         locations = json_content['result']['locations']
-
-        return locations[0]['id']
+        if(len(locations) > 0):
+            return {"id" : locations[0]['id'], "name": locations[0]["names"]["1"] }
+        else:
+            return {"id" : -1, "name": "None" }
 
     def _get_category_ids(self, location_id):
         params = {
@@ -65,7 +67,7 @@ class Parser():
         #print(json_content)
         return results
 
-    def get_items(self, location_id, category_id):
+    def get_items(self, location_id, category_id, limit=5):
         time = floor(datetime.timestamp(datetime.now().replace(second=0, microsecond=0)))
         # location_id = self.get_region_id(region)
         params = {
@@ -75,7 +77,7 @@ class Parser():
             'categoryId': f'{category_id}',
             'page':1,
             'display':'list',
-            'limit':5
+            'limit':f'{limit}'
         }
         url = f'{self.avito_urls["items"]}'
         json_content = self._get_json_by_request(url, params)
@@ -97,10 +99,10 @@ class Parser():
         for categ in categs:
             # pprint((categ["name"], compare(categ["name"], category_name)))
             if compare(categ["name"], category_name) >=0.15:
-                return categ["id"] 
+                return {"id": categ["id"], "name": categ["name"]} 
         return -1
 
-    def get_info(self, add_id):
+    def get_info(self, add_id, debug=False):
         #time = floor(datetime.timestamp(datetime.now().replace(second=0, microsecond=0)))
         # location_id = self.get_region_id(region)
         params = {
@@ -108,7 +110,9 @@ class Parser():
         }
         url = f'{self.avito_urls["info"]}{add_id}'
         json_content = self._get_json_by_request(url, params)
-        for key in ['adjustParams', 'advertOptions', 'breadcrumbs', 'coords', 'deliveryC2C', 'firebaseParams', 'geoReferences', 'icebreakers', 'marketplaceRenameBadge', 'needToCheckCreditInfo', 'needToCheckSimilarItems', 'safeDeal', 'seo', 'shouldShowMapPreview', 'sharing']:
+        if debug:
+            return json_content
+        for key in ['adjustParams', 'advertOptions', 'breadcrumbs', 'coords', 'deliveryC2C', 'firebaseParams', 'geoReferences', 'icebreakers', 'marketplaceRenameBadge', 'needToCheckCreditInfo', 'needToCheckSimilarItems', 'safeDeal', 'shouldShowMapPreview', 'sharing']:
             json_content.pop(key, None)
         return json_content
 
@@ -116,21 +120,31 @@ class Parser():
 if __name__ == '__main__':
     #url = 'https://m.avito.ru/api/1/slocations?key=af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir&locationId=621540&limit=10&q='
     parser = Parser('af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir')
-    # city = input("В каком городе ищем? ")
-    # city_id = parser.get_region_id(city)
-    # print("Указан город: ", city)
-    # category = input("Какую категорию мониторим? ")
-    # category_id = parser.search_category(category, city_id)
-    # if (category_id > -1):
-    #     print("Буду искать по: ", category)
-    #     print("Ищу товары...")
-    #     pprint(parser.get_items(city_id, category_id))
-    # else:
-    #     print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
+    city = input("В каком городе ищем? ")
+    ans_city = parser.get_region_id(city)
+    city_id = ans_city["id"];
+    if city_id > -1:
+        print("Ищу в:", ans_city["name"])
+        category = input("Какую категорию мониторим? ")
+        ans_category = parser.search_category(category, city_id)
+        category_id = ans_category["id"];
+        if (category_id > -1):
+            print("Буду искать по:", ans_category["name"], ans_category["id"])
+            print("Ищу товары...")
+            pprint(parser.get_items(city_id, category_id))
+            monitor = input("То что надо? Запускаю мониторинг? (д/Н) ")
+            if monitor == 'д' or monitor == 'Д':
+                print("Запускаю мониторинг")
+            else:
+                print("Ну ок. Тогда запусти меня по новой!")
+        else:
+            print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
+    else:
+        print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
     #print(parser.get_region_id('Пермь')) #643700
     #print(parser.search_category('товар', 'Пермь'))
-    #print(parser.get_items('Пермь', 98))
-    pprint(parser.get_info(2058464898))
+    # pprint(parser.get_info(2058464898)) # ноут леново для теста
+    # pprint(parser.get_info(2090665858)) #телефон редми
     #response = parser.get_json_by_request() #, headers=headers, proxies=proxies, timeout=Config.REQUEST_TIMEOUT)
 
     #print(response)
