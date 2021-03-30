@@ -120,30 +120,30 @@ class Parser():
 if __name__ == '__main__':
     #url = 'https://m.avito.ru/api/1/slocations?key=af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir&locationId=621540&limit=10&q='
     parser = Parser('af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir')
-    city = input("В каком городе ищем? ")
-    ans_city = parser.get_region_id(city)
-    city_id = ans_city["id"];
-    if city_id > -1:
-        print("Ищу в:", ans_city["name"])
-        category = input("Какую категорию мониторим? ")
-        ans_category = parser.search_category(category, city_id)
-        category_id = ans_category["id"];
-        if (category_id > -1):
-            print("Буду искать по:", ans_category["name"], ans_category["id"])
-            print("Ищу товары...")
-            pprint(parser.get_items(city_id, category_id))
-            monitor = input("То что надо? Запускаю мониторинг? (д/Н) ")
-            if monitor == 'д' or monitor == 'Д':
-                print("Запускаю мониторинг")
-            else:
-                print("Ну ок. Тогда запусти меня по новой!")
-        else:
-            print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
-    else:
-        print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
+    # city = input("В каком городе ищем? ")
+    # ans_city = parser.get_region_id(city)
+    # city_id = ans_city["id"];
+    # if city_id > -1:
+    #     print("Ищу в:", ans_city["name"])
+    #     category = input("Какую категорию мониторим? ")
+    #     ans_category = parser.search_category(category, city_id)
+    #     category_id = ans_category["id"];
+    #     if (category_id > -1):
+    #         print("Буду искать по:", ans_category["name"], ans_category["id"])
+    #         print("Ищу товары...")
+    #         pprint(parser.get_items(city_id, category_id))
+    #         monitor = input("То что надо? Запускаю мониторинг? (д/Н) ")
+    #         if monitor == 'д' or monitor == 'Д':
+    #             print("Запускаю мониторинг")
+    #         else:
+    #             print("Ну ок. Тогда запусти меня по новой!")
+    #     else:
+    #         print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
+    # else:
+    #     print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
     #print(parser.get_region_id('Пермь')) #643700
     #print(parser.search_category('товар', 'Пермь'))
-    # pprint(parser.get_info(2058464898)) # ноут леново для теста
+    pprint(parser.get_info(2058464898)) # ноут леново для теста
     # pprint(parser.get_info(2090665858)) #телефон редми
     #response = parser.get_json_by_request() #, headers=headers, proxies=proxies, timeout=Config.REQUEST_TIMEOUT)
 
