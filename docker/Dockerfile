@@ -4,10 +4,6 @@ FROM python:3.9-alpine
 # рабочая директория внутри проекта
 WORKDIR /usr/src/app
 
-# переменные окружения для python
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 # устанавливаем зависимости
 RUN pip install --upgrade pip
@@ -16,4 +12,3 @@ RUN pip install -r requirements.txt
 
 # копируем содержимое текущей папки в контейнер
 COPY . .
-CMD [ "python", "./t.py" ]

@@ -1,23 +1,19 @@
 version: '3.1'
 
 services:
-
   db:
     image: postgres:13.2-alpine
-    environment:
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
+    restart: always
+    env_file:
+      - .env
     volumes:
       - /var/lib/test/volumes/postgres:/var/lib/postgresql/data
     ports:
       - 55432:5432
-  adminer:
-    image: adminer
-    ports:
-      - 8080:8080
   python:
     build: ./docker/
+    env_file:
+      - .env
     depends_on:
       - db
     volumes:

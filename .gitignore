@@ -2,3 +2,4 @@ parserExample.py
 test*
 avito-test.html
 *.sql
+.env
