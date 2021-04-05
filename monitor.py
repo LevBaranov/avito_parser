@@ -11,16 +11,18 @@ while(True):
     # pprint(monitors)
     ads = []
     for mon in monitors:
-        for item in parser.get_items(mon[0], mon[1], 5000):
-        # for item in parser.get_items(mon[0], mon[1]):
-            id = item['id']
-            ad = parser.get_info(id)
-            posted = datetime.fromtimestamp(ad['time'])
-            now = datetime.now()
-            ads.append((id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
-                        ad['images'][0]['1280x960'], ad['seo']['canonicalUrl'], ad['address'], posted, now, True, 
-                        ad['stats']['views']['total'], int(ad['price']['value'].replace(' ', '')), 'avito'))
-        pprint(ads)
-        db.insert(QUERY_PUT_ADS, ads)
-        print("Добавил в базу объявления")
+        for i in [1,2,3,4,5,6,7,8,9,10]:
+            for item in parser.get_items(mon[0], mon[1], 50, i):
+            # for item in parser.get_items(mon[0], mon[1]):
+                # pprint(item)
+                id = item['id']
+                ad = parser.get_info(id)
+                posted = datetime.fromtimestamp(ad['time'])
+                now = datetime.now()
+                ads.append((id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
+                            ad['images'][0]['1280x960'], ad['seo']['canonicalUrl'], ad['address'], posted, now, True, 
+                            ad['stats']['views']['total'], int(ad['price']['value'].replace(' ', '')), 'avito'))
+            pprint(ads)
+            db.insert(QUERY_PUT_ADS, ads)
+            print("Добавил в базу объявления")
     del db

@@ -1,3 +1,4 @@
+import os
 from openpyxl import Workbook
 from db import Memory
 from parser import Parser
@@ -54,7 +55,8 @@ if(command == 'р'):
                 'Дата создания', 'Дата обновления', 'Просмотры', 'Цена'])
     for item in res:
         sheet.append(list(item))
-
-    wb.save(datetime.now().strftime("%Y%m%d%H%M%S")+'.xlsx')
+    file_name = datetime.now().strftime("%Y%m%d%H%M%S")+'.xlsx'
+    wb.save(file_name)
+    os.replace(file_name, '/var/temp/'+file_name)
 del db
 #ad_id, ad_name, category_id, owner_name, description, img, link, address, date_posted, date_added, status, "views", price, "source"

@@ -67,15 +67,16 @@ class Parser():
         #print(json_content)
         return results
 
-    def get_items(self, location_id, category_id, limit=5):
+    def get_items(self, location_id, category_id, limit=5, page=1):
         time = floor(datetime.timestamp(datetime.now().replace(second=0, microsecond=0)))
-        # location_id = self.get_region_id(region)
+        if limit > 50:
+            limit = 50
         params = {
             'key': f'{self.key}',
             'lastStamp': f'{time}',
             'locationId': f'{location_id}',
             'categoryId': f'{category_id}',
-            'page':1,
+            'page':f'{page}',
             'display':'list',
             'limit':f'{limit}'
         }
@@ -87,7 +88,14 @@ class Parser():
 
         #print(json_content['result'])
 
-        items = [ res['value'] for res in json_content['result']['items'] if res['type'] != 'snippet']
+        items = [ res['value'] for res in json_content['result']['items'] if res['type'] == 'item']
+        # C vip что-то пока не ясно как быть
+        # for res in json_content['result']['items']:
+        #     if res['type'] == 'vip':
+        #         for r in res['value']['list']:
+        #             # pprint(r)
+        #             items.append(r['value'])
+
         for item in items:
             [item.pop(key, None) for key in ['callAction', 'category', 'imageList', 'images', 'geoReferences', 'coords', 'userType', 'hasVideo', 'isVerified', 'contactlessView', 'uri', 'isFavorite']]
 
@@ -143,7 +151,7 @@ if __name__ == '__main__':
     #     print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
     #print(parser.get_region_id('Пермь')) #643700
     #print(parser.search_category('товар', 'Пермь'))
-    pprint(parser.get_info(2058464898)) # ноут леново для теста
+    pprint(parser.get_items(643700, 84, 5000)) # ноут леново для теста
     # pprint(parser.get_info(2090665858)) #телефон редми
     #response = parser.get_json_by_request() #, headers=headers, proxies=proxies, timeout=Config.REQUEST_TIMEOUT)
 
