@@ -18,3 +18,4 @@ services:
       - db
     volumes:
       - ./:/usr/src/app/
+      - /var/results:/var/temp

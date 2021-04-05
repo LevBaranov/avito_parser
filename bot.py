@@ -2,6 +2,7 @@ from openpyxl import Workbook
 from db import Memory
 from parser import Parser
 from pprint import pprint
+from datetime import datetime
 from sql_constant import QUERY_INSERT_CATEGORIES, QUERY_PUT_REGIONS, QUERY_PUT_MONITOR, \
                          QUERY_SELECT_NAME_ACTIVE_MONITOR, QUERY_SELECT_RESULTS_MONITOR
 
@@ -48,9 +49,12 @@ if(command == 'р'):
     res = db.select_val(QUERY_SELECT_RESULTS_MONITOR, [id])
     wb = Workbook()
     sheet = wb.create_sheet(title = 'Результаты', index = 0)
+    sheet.append(['ID объявления', 'Категория', 'Регион', 'Название', 'Автор', 
+                'Описание', 'Картинка', 'Ссылка', 'Адресс', 'Дата парсинга', 
+                'Дата создания', 'Дата обновления', 'Просмотры', 'Цена'])
     for item in res:
         sheet.append(list(item))
 
-    wb.save(id+'jj.xlsx')
+    wb.save(datetime.now().strftime("%Y%m%d%H%M%S")+'.xlsx')
 del db
 #ad_id, ad_name, category_id, owner_name, description, img, link, address, date_posted, date_added, status, "views", price, "source"
