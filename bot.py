@@ -1,3 +1,4 @@
+from openpyxl import Workbook
 from db import Memory
 from parser import Parser
 from pprint import pprint
@@ -44,6 +45,12 @@ if(command == 'р'):
     mon_list = db.select(QUERY_SELECT_NAME_ACTIVE_MONITOR)
     pprint(mon_list)
     id = input("Введите id мониторинга по которому нужны результаты")
-    pprint(db.select_val(QUERY_SELECT_RESULTS_MONITOR, [id]))
+    res = db.select_val(QUERY_SELECT_RESULTS_MONITOR, [id])
+    wb = Workbook()
+    sheet = wb.create_sheet(title = 'Результаты', index = 0)
+    for item in res:
+        sheet.append(list(item))
+
+    wb.save(id+'jj.xlsx')
 del db
 #ad_id, ad_name, category_id, owner_name, description, img, link, address, date_posted, date_added, status, "views", price, "source"

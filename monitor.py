@@ -11,7 +11,7 @@ while(True):
     # pprint(monitors)
     ads = []
     for mon in monitors:
-        for item in parser.get_items(mon[0], mon[1], 2):
+        for item in parser.get_items(mon[0], mon[1], 5000):
         # for item in parser.get_items(mon[0], mon[1]):
             id = item['id']
             ad = parser.get_info(id)
