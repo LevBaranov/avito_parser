@@ -1,14 +1,15 @@
 from db import Memory
 from parser import Parser
 from pprint import pprint
-from sql_constant import QUERY_INSERT_CATEGORIES, QUERY_PUT_REGIONS, QUERY_PUT_MONITOR
+from sql_constant import QUERY_INSERT_CATEGORIES, QUERY_PUT_REGIONS, QUERY_PUT_MONITOR, \
+                         QUERY_SELECT_NAME_ACTIVE_MONITOR, QUERY_SELECT_RESULTS_MONITOR
 
-print("Доступные комнады: и - попробовать искать что-то, р - получить готовые результаты, м - посмотреть списко мониторингов.")
+print("Доступные комнады: и - попробовать искать что-то, р - получить готовые результаты, м - посмотреть список мониторингов.")
 command = input("Введите команду:")
+db = Memory()
 
 if(command == 'и'):
     parser = Parser('af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir')
-    db = Memory()
     city = input("В каком городе ищем? ")
     ans_city = parser.get_region_id(city)
     city_id = ans_city["id"];
@@ -27,13 +28,22 @@ if(command == 'и'):
             monitor = input("То что надо? Запускаю мониторинг? (д/Н) ")
             if monitor == 'д' or monitor == 'Д':
                 db.insert(QUERY_PUT_MONITOR, [(category_id, city_id)])
-                print(f'Добавил мониторинг по параметрам %s %s. Данные начнут появлятся в течении часа.', ans_city["name"], ans_category["name"])
+                print(f'Добавил мониторинг по параметрам {ans_city["name"]}, {ans_category["name"]}. Данные начнут появлятся в течении часа.')
             else:
                 print("Ну ок. Тогда запусти меня по новой!")
         else:
             print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
     else:
         print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
- del db
+    
+if(command == 'м'):
+    mon_list = db.select(QUERY_SELECT_NAME_ACTIVE_MONITOR)
+    pprint(mon_list)
 
+if(command == 'р'):
+    mon_list = db.select(QUERY_SELECT_NAME_ACTIVE_MONITOR)
+    pprint(mon_list)
+    id = input("Введите id мониторинга по которому нужны результаты")
+    pprint(db.select_val(QUERY_SELECT_RESULTS_MONITOR, [id]))
+del db
 #ad_id, ad_name, category_id, owner_name, description, img, link, address, date_posted, date_added, status, "views", price, "source"
