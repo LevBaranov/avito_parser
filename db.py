@@ -15,6 +15,7 @@ class Memory():
         POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
         self.conn = psycopg2.connect(dbname=POSTGRES_DB, user=POSTGRES_USER, 
                         password=POSTGRES_PASSWORD, host='db')
+        self.conn.autocommit = True
     def __repr__(self):
         return "Memory('%s')" % ()
     def __del__(self):
@@ -25,7 +26,6 @@ class Memory():
 
     def insert(self, query, values):
         with self.conn.cursor() as cursor:
-            self.conn.autocommit = True
             insert = sql.SQL(query).format(
                 sql.SQL(',').join(map(sql.Literal, values))
             )
@@ -42,6 +42,12 @@ class Memory():
     def select(self, query):
         cursor = self.conn.cursor()
         cursor.execute(query)
+        records = cursor.fetchall()
+        return records
+
+    def select_val(self, query, values):
+        cursor = self.conn.cursor()
+        cursor.execute(query, values)
         records = cursor.fetchall()
         return records
 

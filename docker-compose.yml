@@ -18,3 +18,8 @@ services:
       - db
     volumes:
       - ./:/usr/src/app/
+      - /var/results:/var/temp
+    command: python monitor.py
+  # cron:
+  #   depends_on:
+  #     - python

@@ -67,15 +67,16 @@ class Parser():
         #print(json_content)
         return results
 
-    def get_items(self, location_id, category_id, limit=5):
+    def get_items(self, location_id, category_id, limit=5, page=1):
         time = floor(datetime.timestamp(datetime.now().replace(second=0, microsecond=0)))
-        # location_id = self.get_region_id(region)
+        if limit > 50:
+            limit = 50
         params = {
             'key': f'{self.key}',
             'lastStamp': f'{time}',
             'locationId': f'{location_id}',
             'categoryId': f'{category_id}',
-            'page':1,
+            'page':f'{page}',
             'display':'list',
             'limit':f'{limit}'
         }
@@ -87,7 +88,14 @@ class Parser():
 
         #print(json_content['result'])
 
-        items = [ res['value'] for res in json_content['result']['items'] if res['type'] != 'snippet']
+        items = [ res['value'] for res in json_content['result']['items'] if res['type'] == 'item']
+        # C vip что-то пока не ясно как быть
+        # for res in json_content['result']['items']:
+        #     if res['type'] == 'vip':
+        #         for r in res['value']['list']:
+        #             # pprint(r)
+        #             items.append(r['value'])
+
         for item in items:
             [item.pop(key, None) for key in ['callAction', 'category', 'imageList', 'images', 'geoReferences', 'coords', 'userType', 'hasVideo', 'isVerified', 'contactlessView', 'uri', 'isFavorite']]
 
@@ -120,30 +128,30 @@ class Parser():
 if __name__ == '__main__':
     #url = 'https://m.avito.ru/api/1/slocations?key=af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir&locationId=621540&limit=10&q='
     parser = Parser('af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir')
-    city = input("В каком городе ищем? ")
-    ans_city = parser.get_region_id(city)
-    city_id = ans_city["id"];
-    if city_id > -1:
-        print("Ищу в:", ans_city["name"])
-        category = input("Какую категорию мониторим? ")
-        ans_category = parser.search_category(category, city_id)
-        category_id = ans_category["id"];
-        if (category_id > -1):
-            print("Буду искать по:", ans_category["name"], ans_category["id"])
-            print("Ищу товары...")
-            pprint(parser.get_items(city_id, category_id))
-            monitor = input("То что надо? Запускаю мониторинг? (д/Н) ")
-            if monitor == 'д' or monitor == 'Д':
-                print("Запускаю мониторинг")
-            else:
-                print("Ну ок. Тогда запусти меня по новой!")
-        else:
-            print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
-    else:
-        print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
+    # city = input("В каком городе ищем? ")
+    # ans_city = parser.get_region_id(city)
+    # city_id = ans_city["id"];
+    # if city_id > -1:
+    #     print("Ищу в:", ans_city["name"])
+    #     category = input("Какую категорию мониторим? ")
+    #     ans_category = parser.search_category(category, city_id)
+    #     category_id = ans_category["id"];
+    #     if (category_id > -1):
+    #         print("Буду искать по:", ans_category["name"], ans_category["id"])
+    #         print("Ищу товары...")
+    #         pprint(parser.get_items(city_id, category_id))
+    #         monitor = input("То что надо? Запускаю мониторинг? (д/Н) ")
+    #         if monitor == 'д' or monitor == 'Д':
+    #             print("Запускаю мониторинг")
+    #         else:
+    #             print("Ну ок. Тогда запусти меня по новой!")
+    #     else:
+    #         print("Я не смог найти подходящую категорию. Попробуйте указать точнее")
+    # else:
+    #     print("Я не смог найти подходящий город/регион. Попробуйте указать точнее")
     #print(parser.get_region_id('Пермь')) #643700
     #print(parser.search_category('товар', 'Пермь'))
-    # pprint(parser.get_info(2058464898)) # ноут леново для теста
+    pprint(parser.get_items(643700, 84, 5000)) # ноут леново для теста
     # pprint(parser.get_info(2090665858)) #телефон редми
     #response = parser.get_json_by_request() #, headers=headers, proxies=proxies, timeout=Config.REQUEST_TIMEOUT)
 
