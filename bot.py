@@ -1,4 +1,4 @@
-import os
+import shutil
 from openpyxl import Workbook
 from db import Memory
 from parser import Parser
@@ -46,7 +46,7 @@ if(command == 'м'):
 if(command == 'р'):
     mon_list = db.select(QUERY_SELECT_NAME_ACTIVE_MONITOR)
     pprint(mon_list)
-    id = input("Введите id мониторинга по которому нужны результаты")
+    id = input("Введите id мониторинга по которому нужны результаты:")
     res = db.select_val(QUERY_SELECT_RESULTS_MONITOR, [id])
     wb = Workbook()
     sheet = wb.create_sheet(title = 'Результаты', index = 0)
@@ -57,6 +57,7 @@ if(command == 'р'):
         sheet.append(list(item))
     file_name = datetime.now().strftime("%Y%m%d%H%M%S")+'.xlsx'
     wb.save(file_name)
-    os.replace(file_name, '/var/temp/'+file_name)
+    shutil.move(file_name, '/var/logs/results/'+file_name)
+    print(f'Я скачал файл {file_name} в /var/logs/results/')
 del db
 #ad_id, ad_name, category_id, owner_name, description, img, link, address, date_posted, date_added, status, "views", price, "source"
