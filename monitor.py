@@ -9,9 +9,10 @@ while(True):
     parser = Parser('af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir')
     monitors = db.select(QUERY_SELECT_ACTIVE_MONITOR)
     # pprint(monitors)
-    ads = []
+    
     for mon in monitors:
         for i in [1,2,3,4,5,6,7,8,9,10]:
+            ads = []
             for item in parser.get_items(mon[0], mon[1], 50, i):
             # for item in parser.get_items(mon[0], mon[1]):
                 # pprint(item)
