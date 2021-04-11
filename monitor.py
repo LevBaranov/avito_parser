@@ -19,9 +19,14 @@ while(True):
                 ad = parser.get_info(id)
                 posted = datetime.fromtimestamp(ad['time'])
                 now = datetime.now()
+                price = ''.join([i for i in ad['price']['value'] if i.isdigit()])
+                if len(price) > 0:
+                    price = int(price)
+                else:
+                    price = 0 
                 ads.append((id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
                             ad['images'][0]['1280x960'], ad['seo']['canonicalUrl'], ad['address'], posted, now, True, 
-                            ad['stats']['views']['total'], int(ad['price']['value'].replace(' ', '')), 'avito'))
+                            ad['stats']['views']['total'], price, 'avito'))
             pprint(ads)
             db.insert(QUERY_PUT_ADS, ads)
             print("Добавил в базу объявления")
