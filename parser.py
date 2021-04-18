@@ -1,5 +1,6 @@
 import json
 import httpx
+from random import randint
 from time import sleep
 from datetime import datetime
 from math import floor
@@ -23,7 +24,7 @@ class Parser():
         return "Parser('%s')" % (self.key)
     
     def _get_json_by_request(self, url, params):
-        sleep(2)
+        sleep(randint(20, 120))
         try:
             resp = httpx.get(url, params=params)
             json_content = resp.json()
