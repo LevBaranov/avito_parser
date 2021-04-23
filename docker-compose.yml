@@ -19,6 +19,7 @@ services:
     volumes:
       - ./:/usr/src/app/
       - /var/logs/results/:/var/logs/results/
+      - /var/log/:/var/log/
     command: python monitor.py
   # cron:
   #   depends_on:
