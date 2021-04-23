@@ -24,7 +24,7 @@ class Parser():
         return "Parser('%s')" % (self.key)
     
     def _get_json_by_request(self, url, params):
-        sleep(randint(20, 120))
+        sleep(randint(2, 5))
         try:
             resp = httpx.get(url, params=params)
             json_content = resp.json()
