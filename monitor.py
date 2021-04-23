@@ -1,12 +1,13 @@
-import logging
+from logger import MyLogger
 from db import Memory
 from parser import Parser
 from pprint import pprint
 from datetime import datetime
 from sql_constant import QUERY_PUT_ADS, QUERY_SELECT_ACTIVE_MONITOR
 
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-logging.info('Monitoring is active')
+logger = MyLogger('monitor')
+logger.echo("INFO", 'Monitoring is active')
+
 while(True):
     db = Memory()
     parser = Parser('af0deccbgcgidddjgnvljitntccdduijhdinfgjgfjir')
@@ -22,6 +23,8 @@ while(True):
                 try:
                     id = item['id']
                     ad = parser.get_info(id)
+                    string = pprint(item)
+                    logger.echo("INFO", string)
                     posted = datetime.fromtimestamp(ad['time'])
                     now = datetime.now()
                     price = ''.join([i for i in ad['price']['value'] if i.isdigit()])
@@ -29,16 +32,14 @@ while(True):
                         price = int(price)
                     else:
                         price = 0
-                    pprint(ad)
-                    db.insert(QUERY_PUT_ADS, (id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
+                    db.insert(QUERY_PUT_ADS, [(id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
                                  ad['images'][0]['1280x960'], ad['seo']['canonicalUrl'], ad['address'], posted, now, True, 
-                                 ad['stats']['views']['total'], price, 'avito'))
+                                 ad['stats']['views']['total'], price, 'avito')])
+
+                    # ads.append((id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
+                    #         ad['images'][0]['1280x960'], ad['seo']['canonicalUrl'], ad['address'], posted, now, True, 
+                    #         ad['stats']['views']['total'], price, 'avito'))
                 except Exception as e:
-                    logging.exception("Exception occurred")
-                # ads.append((id, ad['title'], ad['categoryId'], mon[0], ad['seller']['name'], ad['description'], 
-                #             ad['images'][0]['1280x960'], ad['seo']['canonicalUrl'], ad['address'], posted, now, True, 
-                #             ad['stats']['views']['total'], price, 'avito'))
-            pprint(ads)
-            db.insert(QUERY_PUT_ADS, ads)
-            print("Добавил в базу объявления")
+                    logger.exception(f'mon:{mon[0], mon[1]} - id:{item["id"]} - Exception occurred')
+            logger.echo("INFO", "Добавил в базу объявления")
     del db

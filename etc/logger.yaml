@@ -1,0 +1,35 @@
+version: 1
+disable_existing_loggers: True
+formatters:
+  simple:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+  fileMonitor:
+    class: logging.FileHandler
+    level: WARNING
+    filename: /var/log/monitor.log
+    mode: w
+    formatter: simple
+  fileParser:
+    class: logging.FileHandler
+    level: WARNING
+    filename: /var/log/parser.log
+    mode: w
+    formatter: simple
+loggers:
+  monitor:
+    level: INFO
+    handlers: [console, fileMonitor]
+    propagate: no
+  parser:
+    level: INFO
+    handlers: [console, fileParser]
+    propagate: no
+root:
+  level: DEBUG
+  handlers: [console]

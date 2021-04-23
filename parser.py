@@ -1,5 +1,6 @@
 import json
 import httpx
+from logger import MyLogger
 from random import randint
 from time import sleep
 from datetime import datetime
@@ -25,6 +26,7 @@ class Parser():
     
     def _get_json_by_request(self, url, params):
         sleep(randint(2, 5))
+        logger = MyLogger('parser')
         try:
             resp = httpx.get(url, params=params)
             json_content = resp.json()
@@ -36,6 +38,8 @@ class Parser():
         except httpx.exceptions.ProxyError:
             sleep(0.001)
             self._get_json_by_request(url, params)
+        except Exception as ex:
+            logger.exception(f'Parsing Error')
 
     def get_region_id(self, region):
         params = {
